@@ -25,4 +25,4 @@ class User(Base):
     isActive = Column(Boolean, default=True)
     role = Column(Enum(UserTypes))
     createdAt = Column(TIMESTAMP, default=datetime.utcnow())
-    updatedAt = Column(TIMESTAMP, onupdate=datetime.utcnow())
+    updatedAt = Column(TIMESTAMP, default=datetime.utcnow(), onupdate=datetime.utcnow())
