@@ -1,7 +1,7 @@
 from datetime import timedelta
+from dataclasses import dataclass
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 
 from src.domain.core.jwt import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from src.domain.core.security import authenticate_user
@@ -13,9 +13,15 @@ auth = APIRouter(
 )
 
 
+@dataclass
+class AuthBody:
+    username: str
+    password: str
+
+
 @auth.post("/token")
-async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(form_data.username, form_data.password)
+async def login_access_token(body: AuthBody):
+    user = authenticate_user(body.username, body.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -28,7 +34,7 @@ async def login_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     )
     return {
         "user": user,
-        "access_token": access_token,
+        "token": access_token,
         "token_type": "bearer",
         "expires_in": access_token_expires.seconds
     }
