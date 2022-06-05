@@ -9,7 +9,7 @@ from src.infra.config.db_base import Base
 
 
 class UserTypes(enum.Enum):
-    superadmin = 'superadmin'
+    professor = 'professor'
     student = 'student'
 
 
