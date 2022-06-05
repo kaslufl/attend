@@ -1,7 +1,7 @@
 from datetime import timedelta
 from dataclasses import dataclass
 
-from fastapi import APIRouter, Depends, HTTPException, status, Body
+from fastapi import APIRouter, HTTPException, status
 
 from src.domain.core.jwt import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from src.domain.core.security import authenticate_user
