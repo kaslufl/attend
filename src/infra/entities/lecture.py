@@ -1,0 +1,16 @@
+import uuid
+
+from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
+from sqlalchemy.orm import relationship
+
+from src.infra.config.db_base import Base
+
+
+class Lecture(Base):
+    __tablename__ = 'lectures'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4())
+    content = Column(String)
+    date = Column(TIMESTAMP)
+    class_id = Column(UUID, ForeignKey("classes.id"))
+    aclass = relationship("Class")
