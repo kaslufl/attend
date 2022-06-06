@@ -5,3 +5,4 @@ from .subject import Subject
 from .aclass import Class
 from .student_class import StudentClass
 from .lecture import Lecture
+from .attendance import Attendance
