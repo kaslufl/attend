@@ -1,9 +1,8 @@
 import uuid
 
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
 
 from src.composer.user_composite import user_composer
-from src.domain.core.jwt import get_current_active_user
 from src.domain.models.users import UsersModel
 
 user = APIRouter(
@@ -14,7 +13,7 @@ user = APIRouter(
 
 
 @user.get("/{user_id}")
-def get_user_by_id(user_id: uuid.UUID, current_user: UsersModel = Depends(get_current_active_user)):
+def get_user_by_id(user_id: uuid.UUID):
     route = user_composer()
     response = route.get_user_by_id(user_id)
     if not response:
@@ -26,14 +25,14 @@ def get_user_by_id(user_id: uuid.UUID, current_user: UsersModel = Depends(get_cu
 
 
 @user.post("/", status_code=201)
-def insert_user(new_user: UsersModel, current_user: UsersModel = Depends(get_current_active_user)):
+def insert_user(new_user: UsersModel):
     route = user_composer()
     response = route.insert_user(new_user)
     return {"user": response}
 
 
 @user.get("/{user_id}/classes")
-def get_user_classes(user_id: uuid.UUID, current_user: UsersModel = Depends(get_current_active_user)):
+def get_user_classes(user_id: uuid.UUID):
     route = user_composer()
     response = route.get_user_classes(user_id)
     if not response:

@@ -14,7 +14,7 @@ lecture = APIRouter(
 
 
 @lecture.get("/{lecture_id}")
-def get_class_by_id(lecture_id: uuid.UUID, current_user: UsersModel = Depends(get_current_active_user)):
+def get_class_by_id(lecture_id: uuid.UUID):
     route = lecture_composer()
     response = route.get_lecture(lecture_id)
     if not response:
