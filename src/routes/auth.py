@@ -15,13 +15,13 @@ auth = APIRouter(
 
 @dataclass
 class AuthBody:
-    username: str
+    matricula: str
     password: str
 
 
 @auth.post("/token")
 async def login_access_token(body: AuthBody):
-    user = authenticate_user(body.username, body.password)
+    user = authenticate_user(body.matricula, body.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
