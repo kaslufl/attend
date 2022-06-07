@@ -40,4 +40,11 @@ class UserController:
         classes = self.user_repo.select_user_classes(user_id)
         if len(classes) == 0:
             return False
-        return classes
+
+        result = []
+        for aclass in classes:
+            dic = aclass._asdict()
+            dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
+            result.append(dic)
+
+        return result
