@@ -2,9 +2,9 @@ from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.domain.models import ClassesModel
+from src.domain.models import ClassesModel, LecturesModel
 from src.infra.config import DBConnectionHandler
-from src.infra.entities import Class
+from src.infra.entities import Class, Lecture
 
 
 class ClassRepository:
@@ -18,6 +18,27 @@ class ClassRepository:
                     db_connection.session.query(Class)
                     .filter_by(id=class_id)
                     .one()
+                )
+                return [data]
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_class_lectures(cls, class_id: str = None) -> List[LecturesModel]:
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = (
+                    db_connection.session.query(Lecture)
+                    .filter_by(class_id=class_id)
+                    .all()
                 )
                 return [data]
 

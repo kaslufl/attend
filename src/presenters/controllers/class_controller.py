@@ -1,5 +1,6 @@
-from src.domain.models.classes import ClassesModel
+from src.domain.models import ClassesModel, LecturesModel
 from src.infra.repo.class_repository import ClassRepository
+from typing import List
 
 
 class ClassController:
@@ -12,3 +13,9 @@ class ClassController:
         if len(aclass) > 0:
             return aclass[0]
         return False
+
+    def get_class_lectures(self, class_id: str) -> List[LecturesModel] | bool:
+        lectures = self.class_repo.select_class_lectures(class_id)
+        if len(lectures) == 0:
+            return False
+        return lectures
