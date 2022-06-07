@@ -41,4 +41,4 @@ def get_user_classes(user_id: uuid.UUID, current_user: UsersModel = Depends(get_
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found",
         )
-    return {"classes": response}
+    return response

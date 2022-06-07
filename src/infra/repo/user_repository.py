@@ -83,7 +83,7 @@ class UserRepository:
                     .filter_by(professor_id=user_id)
                     .all()
                 )
-                return [data]
+                return data
 
             except NoResultFound:
                 return []
