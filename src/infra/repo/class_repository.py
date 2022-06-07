@@ -1,5 +1,6 @@
 from typing import List
 
+from sqlalchemy import asc
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.domain.models import ClassesModel, LecturesModel
@@ -38,6 +39,7 @@ class ClassRepository:
                 data = (
                     db_connection.session.query(Lecture)
                     .filter_by(class_id=class_id)
+                    .order_by(asc(Lecture.date))
                     .all()
                 )
                 return data
