@@ -26,7 +26,19 @@ def get_user_by_id(user_id: uuid.UUID, current_user: UsersModel = Depends(get_cu
 
 
 @user.post("/", status_code=201)
-def insert_user(user: UsersModel, current_user: UsersModel = Depends(get_current_active_user)):
+def insert_user(new_user: UsersModel, current_user: UsersModel = Depends(get_current_active_user)):
     route = user_composer()
-    response = route.insert_user(user)
+    response = route.insert_user(new_user)
     return {"user": response}
+
+
+@user.get("/{user_id}/classes")
+def get_user_classes(user_id: uuid.UUID, current_user: UsersModel = Depends(get_current_active_user)):
+    route = user_composer()
+    response = route.get_user_classes(user_id)
+    if not response:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    return {"classes": response}

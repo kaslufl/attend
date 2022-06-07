@@ -2,9 +2,9 @@ from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.domain.models import UsersModel
+from src.domain.models import UsersModel, ClassesModel
 from src.infra.config import DBConnectionHandler
-from src.infra.entities import User
+from src.infra.entities import User, Class
 
 
 class UserRepository:
@@ -61,6 +61,27 @@ class UserRepository:
                     db_connection.session.query(User)
                     .filter_by(matricula=user_matricula)
                     .one()
+                )
+                return [data]
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_user_classes(cls, user_id: str = None) -> List[ClassesModel]:
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = (
+                    db_connection.session.query(Class)
+                    .filter_by(professor_id=user_id)
+                    .all()
                 )
                 return [data]
 

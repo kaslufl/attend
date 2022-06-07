@@ -1,7 +1,8 @@
-from src.domain.models.users import UsersModel
+from src.domain.models import UsersModel, ClassesModel
 from src.infra.repo.user_repository import UserRepository
 from src.domain.core.security import get_password_hash
 from fastapi import HTTPException, status
+from typing import List
 
 
 class UserController:
@@ -34,3 +35,9 @@ class UserController:
         if len(user) > 0:
             return user[0]
         return False
+
+    def get_user_classes(self, user_id: str) -> List[ClassesModel] | bool:
+        classes = self.user_repo.select_user_classes(user_id)
+        if len(classes) == 0:
+            return False
+        return classes
