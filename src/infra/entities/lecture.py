@@ -12,5 +12,5 @@ class Lecture(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4())
     content = Column(String)
     date = Column(TIMESTAMP)
-    class_id = Column(UUID, ForeignKey("classes.id"))
+    class_id = Column(UUID(as_uuid=True), ForeignKey("classes.id"))
     aclass = relationship("Class")

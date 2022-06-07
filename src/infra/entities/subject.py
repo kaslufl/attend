@@ -12,5 +12,5 @@ class Subject(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4())
     code = Column(String)
     name = Column(String)
-    course_id = Column(UUID, ForeignKey("courses.id"))
+    course_id = Column(UUID(as_uuid=True), ForeignKey("courses.id"))
     course = relationship("Course")
