@@ -11,7 +11,7 @@ class UserRepository:
     """Class to manage User repository"""
 
     @classmethod
-    def insert_user(cls, name: str, password: str, matricula: int, email: str, role: str, photoUrl: str) -> UsersModel:
+    def insert_user(cls, name: str, password: str, matricula: int, email: str, role: str, photoUrl: str) -> None:
         with DBConnectionHandler() as db_connection:
             try:
                 new_user = User(
