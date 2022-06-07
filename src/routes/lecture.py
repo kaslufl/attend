@@ -22,4 +22,4 @@ def get_class_by_id(lecture_id: uuid.UUID):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Lecture not found",
         )
-    return {"lecture": response}
+    return response
