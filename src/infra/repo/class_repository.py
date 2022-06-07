@@ -40,7 +40,7 @@ class ClassRepository:
                     .filter_by(class_id=class_id)
                     .all()
                 )
-                return [data]
+                return data
 
             except NoResultFound:
                 return []
