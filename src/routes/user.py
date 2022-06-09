@@ -67,3 +67,15 @@ def update_user_photo(user_id: uuid.UUID, updated_user: UserPhoto):
     route = user_composer()
     response = route.update_user_photo_by_id(user_id, updated_user.photo)
     return response
+
+
+@user.get("/{user_id}/student/classes")
+def get_student_classes(user_id: uuid.UUID):
+    route = user_composer()
+    response = route.get_student_classes(user_id)
+    if not response:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    return response

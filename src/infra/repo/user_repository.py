@@ -1,12 +1,11 @@
-import time
+from datetime import datetime
 from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.domain.models import UsersModel, ClassesModel
 from src.infra.config import DBConnectionHandler
-from src.infra.entities import User, UserTypes
-from datetime import datetime
+from src.infra.entities import User
 
 
 class UserRepository:
@@ -99,26 +98,11 @@ class UserRepository:
     def select_user_classes(cls, user_id: str = None) -> List[ClassesModel]:
         with DBConnectionHandler() as db_connection:
             try:
-                user = (
-                    db_connection.session.query(User)
-                    .filter_by(id=user_id)
-                    .one()
-                )
-                if user.role == UserTypes.professor:
-                    data = db_connection.session.execute(
-                        f"select c.id, c.code, s.name as subject from classes c inner join subjects s "
-                        f"on c.subject_id = s.id  where c.professor_id = '{user_id}'"
-                    ).all()
-                    return data
-
-                else:
-                    data = db_connection.session.execute(
-                        'select c.id, c.code, s.name as subject, u."name" as professor '
-                        'from classes c inner join subjects s on c.subject_id = s.id '
-                        'inner join users u on u.id = c.professor_id '
-                        f"inner join studentclass s2 on c.id = s2.class_id where s2.student_id  = '{user_id}'"
-                    ).all()
-                    return data
+                data = db_connection.session.execute(
+                    f"select c.id, c.code, s.name as subject from classes c inner join subjects s "
+                    f"on c.subject_id = s.id  where c.professor_id = '{user_id}'"
+                ).all()
+                return data
 
             except NoResultFound:
                 return []
@@ -190,6 +174,71 @@ class UserRepository:
                 db_connection.session.refresh(data)
                 return data
 
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_student_classes(cls, user_id: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = db_connection.session.execute(
+                    'select c.id, c.code, c.photoUrl, s.name as subject '
+                    'from classes c inner join subjects s on c.subject_id = s.id '
+                    'inner join users u on u.id = c.professor_id '
+                    f"inner join studentclass s2 on c.id = s2.class_id where s2.student_id = '{user_id}'"
+                ).all()
+                return data
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_class_professor(cls, class_id: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = db_connection.session.execute(
+                    f"select * from users u inner join classes c on u.id = c.professor_id"
+                    f" where c.id = '{class_id}'"
+                ).one()
+                return data
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_student_presence(cls, user_id: str = None, class_id: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = db_connection.session.execute(
+                    f"select count(*) from attendances a inner join lectures l on a.lecture_id = l.id "
+                    f"inner join classes c on c.id = l.class_id "
+                    f"where student_id = '{user_id}' and a.presence = 'f' and c.id = '{class_id}'"
+                    f'and l."date" <= '
+                    f"'{datetime.utcnow()}'"
+                ).one()
+                return data
+
+            except NoResultFound:
+                return []
 
             except:
                 db_connection.session.rollback()

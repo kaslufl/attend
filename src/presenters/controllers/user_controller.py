@@ -71,3 +71,18 @@ class UserController:
                 detail="Bad Request",
             )
         return result
+
+    def get_student_classes(self, user_id: str) -> List[ClassesModel] | bool:
+        classes = self.user_repo.select_student_classes(user_id)
+        if len(classes) == 0:
+            return False
+
+        result = []
+        for aclass in classes:
+            dic = aclass._asdict()
+            dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
+            dic["professor"] = self.user_repo.select_class_professor(aclass.id)
+            dic["attendanceCount"] = self.user_repo.select_student_presence(user_id, aclass.id).count
+            result.append(dic)
+
+        return result
