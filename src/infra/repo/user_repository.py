@@ -311,7 +311,7 @@ class UserRepository:
         with DBConnectionHandler() as db_connection:
             try:
                 data = db_connection.session.execute(
-                    'select l.id, l."date", s."name" as subject , '
+                    'select c.id, l."date", s."name" as subject , '
                     '(select count(*) from attendances a inner join lectures la on a.lecture_id = la.id '
                     "where la.id = l.id  and a.presence = 't') as "
                     '"count" from lectures l inner join classes c on l.class_id = c.id '
