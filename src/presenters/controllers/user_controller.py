@@ -96,12 +96,11 @@ class UserController:
         ordered_classes = []
         for aclass in classes:
             dic = aclass._asdict()
-            dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
+            dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id).date
             ordered_classes.append(dic)
         ordered_classes.sort(key=lambda d: d["date"])
 
-        result = []
         for aclass in ordered_classes:
-            data = self.user_repo.select_attendance_levels(aclass["id"])
-            result.append(data)
-        return result
+            aclass["amount"] = self.user_repo.select_attendance_levels(aclass["id"])
+
+        return ordered_classes
