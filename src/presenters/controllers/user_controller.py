@@ -90,7 +90,7 @@ class UserController:
         result.sort(key=lambda d: d["date"])
         return result
 
-    def get_user_classes_chart(self, user_id: str):
+    def get_user_classes_chart_old(self, user_id: str):
         classes = self.user_repo.select_user_classes(user_id)
 
         ordered_classes = []
@@ -104,3 +104,13 @@ class UserController:
             aclass["amount"] = self.user_repo.select_attendance_levels(aclass["id"])
 
         return ordered_classes
+
+    def get_user_classes_chart(self, user_id: str):
+        classes = self.user_repo.select_user_classes(user_id)
+
+        result = []
+        for aclass in classes:
+            lectures = self.user_repo.select_class_lectures(aclass.id)
+            result += lectures
+
+        return result
