@@ -315,7 +315,8 @@ class UserRepository:
                     '(select count(*) from attendances a inner join lectures la on a.lecture_id = la.id '
                     "where la.id = l.id  and a.presence = 't') as "
                     '"count" from lectures l inner join classes c on l.class_id = c.id '
-                    f"inner join subjects s on c.subject_id = s.id where l.class_id = '{class_id}'"
+                    f"inner join subjects s on c.subject_id = s.id where l.class_id = '{class_id}' "
+                    'order by l."date"'
                 ).all()
                 return data
 

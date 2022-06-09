@@ -113,4 +113,5 @@ class UserController:
             lectures = self.user_repo.select_class_lectures(aclass.id)
             result += lectures
 
+        result.sort(key=lambda d: d.date)
         return result
