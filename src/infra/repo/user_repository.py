@@ -255,8 +255,6 @@ class UserRepository:
                     f"select count(*) from attendances a inner join lectures l on a.lecture_id = l.id "
                     f"inner join classes c on c.id = l.class_id "
                     f"where student_id = '{user_id}' and c.id = '{class_id}'"
-                    f'and l."date" <= '
-                    f"'{datetime.utcnow()}'"
                 ).one()
                 return data
 
