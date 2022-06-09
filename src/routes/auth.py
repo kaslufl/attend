@@ -6,6 +6,8 @@ from fastapi import APIRouter, HTTPException, status
 from src.domain.core.jwt import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 from src.domain.core.security import authenticate_user
 
+from src.composer.user_composite import user_composer
+
 auth = APIRouter(
     prefix='/api/auth',
     tags=['auth'],
@@ -32,6 +34,7 @@ async def login_access_token(body: AuthBody):
     access_token = create_access_token(
         data={"matricula": user.matricula}, expires_delta=access_token_expires
     )
+    user_composer().update_last_login(user.id)
     return {
         "user": user,
         "token": access_token,

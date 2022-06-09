@@ -1,3 +1,4 @@
+import time
 from typing import List
 
 from sqlalchemy.orm.exc import NoResultFound
@@ -5,10 +6,30 @@ from sqlalchemy.orm.exc import NoResultFound
 from src.domain.models import UsersModel, ClassesModel
 from src.infra.config import DBConnectionHandler
 from src.infra.entities import User
+from datetime import datetime
 
 
 class UserRepository:
     """Class to manage User repository"""
+
+    @classmethod
+    def update_last_login(cls, user_id) -> None:
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = (
+                    db_connection.session.query(User)
+                    .filter_by(id=user_id)
+                    .one()
+                )
+                data.lastLogin = datetime.utcnow()
+                db_connection.session.commit()
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
 
     @classmethod
     def insert_user(cls, name: str, password: str, matricula: int, email: str, role: str, photoUrl: str) -> None:
@@ -105,6 +126,55 @@ class UserRepository:
 
             except NoResultFound:
                 return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def update_user_by_id(cls, user_id: str = None, user_name: str = None, user_email: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = (
+                    db_connection.session.query(User)
+                    .filter_by(id=user_id)
+                    .one()
+                )
+                if user_name:
+                    data.name = user_name
+
+                if user_email:
+                    data.email = user_email
+
+                db_connection.session.commit()
+                db_connection.session.refresh(data)
+                return data
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def update_user_photo(cls, user_id: str = None, user_photo: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = (
+                    db_connection.session.query(User)
+                    .filter_by(id=user_id)
+                    .one()
+                )
+                data.photoUrl = user_photo
+
+                db_connection.session.commit()
+                db_connection.session.refresh(data)
+                return data
+
 
             except:
                 db_connection.session.rollback()

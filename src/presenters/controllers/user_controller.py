@@ -10,6 +10,9 @@ class UserController:
     def __init__(self, user_repository: UserRepository):
         self.user_repo = user_repository
 
+    def update_last_login(self, user_id: str):
+        self.user_repo.update_last_login(user_id)
+
     def insert_user(self, user: UsersModel) -> UsersModel:
         hashed_password = get_password_hash(user.password)
 
@@ -47,4 +50,24 @@ class UserController:
             dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
             result.append(dic)
 
+        return result
+
+    def update_user_by_id(self, user_id: str, user_name: str, user_email: str) -> UsersModel | bool:
+        try:
+            result = self.user_repo.update_user_by_id(user_id, user_name, user_email)
+        except:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Bad Request",
+            )
+        return result
+
+    def update_user_photo_by_id(self, user_id: str, user_photo: str) -> UsersModel | bool:
+        try:
+            result = self.user_repo.update_user_photo(user_id, user_photo)
+        except:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Bad Request",
+            )
         return result
