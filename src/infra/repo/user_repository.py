@@ -209,7 +209,7 @@ class UserRepository:
         with DBConnectionHandler() as db_connection:
             try:
                 data = db_connection.session.execute(
-                    f"select * from users u inner join classes c on u.id = c.professor_id"
+                    f"select u.* from users u inner join classes c on u.id = c.professor_id"
                     f" where c.id = '{class_id}'"
                 ).one()
                 return data
