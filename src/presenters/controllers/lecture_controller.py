@@ -1,4 +1,5 @@
 from src.infra.repo.lecture_repository import LectureRepository
+from fastapi import HTTPException, status
 
 
 class LectureController:
@@ -17,3 +18,13 @@ class LectureController:
         response["teacher"] = self.lecture_repo.select_lecture_teacher(lecture.class_id)[0]
         response["attendance"] = self.lecture_repo.select_lecture_attendance(lecture_id)
         return response
+
+    def update_lecture_attendance(self, lecture_id: str, attendance: list):
+        try:
+            result = self.lecture_repo.update_lecture_attendance(lecture_id, attendance)
+        except:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Bad Request",
+            )
+        return result
