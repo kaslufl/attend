@@ -14,6 +14,7 @@ class Class(Base):
     subject_id = Column(UUID(as_uuid=True), ForeignKey("subjects.id"))
     professor_id = Column(UUID(as_uuid=True), ForeignKey("users.id"))
     period_id = Column(UUID(as_uuid=True), ForeignKey("periods.id"))
+    photoUrl = Column(String)
     subject = relationship("Subject")
     professor = relationship("User")
     period = relationship("Period")
