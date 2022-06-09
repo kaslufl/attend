@@ -8,6 +8,13 @@ from src.infra.config import DBConnectionHandler
 from src.infra.entities import User
 
 
+def get_chart_data(total_attendance: int, total_students: int, total_lectures: int):
+    div = total_students * total_lectures
+    if div == 0:
+        return 0
+    return total_attendance * 100 / div
+
+
 class UserRepository:
     """Class to manage User repository"""
 
@@ -257,6 +264,37 @@ class UserRepository:
                     f"where student_id = '{user_id}' and c.id = '{class_id}'"
                 ).one()
                 return data
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+
+    @classmethod
+    def select_attendance_levels(cls, class_id: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                total_students = db_connection.session.execute(
+                    f"select count(*) from studentclass s where class_id = '{class_id}'"
+                ).one()
+
+                total_attendance = db_connection.session.execute(
+                    f"select count(*) from attendances a inner join lectures l on a.lecture_id = l.id "
+                    f"where l.class_id = '{class_id}' and a.presence = 't' and l.date <= '{datetime.utcnow()}'"
+                ).one()
+
+                total_lectures = db_connection.session.execute(
+                    f"select count(*) from lectures l where l.class_id = '{class_id}' "
+                    f"and l.date <= '{datetime.utcnow()}'"
+                ).one()
+
+                return get_chart_data(total_attendance.count, total_students.count, total_lectures.count)
 
             except NoResultFound:
                 return []

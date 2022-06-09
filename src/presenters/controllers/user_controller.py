@@ -50,6 +50,7 @@ class UserController:
             dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
             result.append(dic)
 
+        result.sort(key=lambda d: d["date"])
         return result
 
     def update_user_by_id(self, user_id: str, user_name: str, user_email: str) -> UsersModel | bool:
@@ -86,4 +87,21 @@ class UserController:
             dic["lessonsCount"] = self.user_repo.select_class_lectures_count(user_id, aclass.id).count
             result.append(dic)
 
+        result.sort(key=lambda d: d["date"])
+        return result
+
+    def get_user_classes_chart(self, user_id: str):
+        classes = self.user_repo.select_user_classes(user_id)
+
+        ordered_classes = []
+        for aclass in classes:
+            dic = aclass._asdict()
+            dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
+            ordered_classes.append(dic)
+        ordered_classes.sort(key=lambda d: d["date"])
+
+        result = []
+        for aclass in ordered_classes:
+            data = self.user_repo.select_attendance_levels(aclass["id"])
+            result.append(data)
         return result

@@ -79,3 +79,9 @@ def get_student_classes(user_id: uuid.UUID):
             detail="User not found",
         )
     return response
+
+@user.get("/{user_id}/chart")
+def get_user_classes_chart(user_id: uuid.UUID):
+    route = user_composer()
+    response = route.get_user_classes_chart(user_id)
+    return response
