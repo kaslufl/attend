@@ -5,7 +5,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.domain.models import UsersModel, ClassesModel
 from src.infra.config import DBConnectionHandler
-from src.infra.entities import User
+from src.infra.entities import User, UserTypes
 from datetime import datetime
 
 
@@ -99,11 +99,26 @@ class UserRepository:
     def select_user_classes(cls, user_id: str = None) -> List[ClassesModel]:
         with DBConnectionHandler() as db_connection:
             try:
-                data = db_connection.session.execute(
-                    f"select c.id, c.code, s.name as subject from classes c inner join subjects s "
-                    f"on c.subject_id = s.id  where c.professor_id = '{user_id}'"
-                ).all()
-                return data
+                user = (
+                    db_connection.session.query(User)
+                    .filter_by(id=user_id)
+                    .one()
+                )
+                if user.role == UserTypes.professor:
+                    data = db_connection.session.execute(
+                        f"select c.id, c.code, s.name as subject from classes c inner join subjects s "
+                        f"on c.subject_id = s.id  where c.professor_id = '{user_id}'"
+                    ).all()
+                    return data
+
+                else:
+                    data = db_connection.session.execute(
+                        'select c.id, c.code, s.name as subject, u."name" as professor '
+                        'from classes c inner join subjects s on c.subject_id = s.id '
+                        'inner join users u on u.id = c.professor_id '
+                        f"inner join studentclass s2 on c.id = s2.class_id where s2.student_id  = '{user_id}'"
+                    ).all()
+                    return data
 
             except NoResultFound:
                 return []

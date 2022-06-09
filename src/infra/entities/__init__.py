@@ -1,4 +1,4 @@
-from .user import User
+from .user import User, UserTypes
 from .period import Period
 from .course import Course
 from .subject import Subject
