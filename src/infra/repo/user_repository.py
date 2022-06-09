@@ -187,7 +187,7 @@ class UserRepository:
         with DBConnectionHandler() as db_connection:
             try:
                 data = db_connection.session.execute(
-                    'select c.id, c.code, c.photoUrl, s.name as subject '
+                    'select c.id, c.code, c."photoUrl", s.name as subject '
                     'from classes c inner join subjects s on c.subject_id = s.id '
                     'inner join users u on u.id = c.professor_id '
                     f"inner join studentclass s2 on c.id = s2.class_id where s2.student_id = '{user_id}'"
@@ -232,6 +232,29 @@ class UserRepository:
                     f"select count(*) from attendances a inner join lectures l on a.lecture_id = l.id "
                     f"inner join classes c on c.id = l.class_id "
                     f"where student_id = '{user_id}' and a.presence = 'f' and c.id = '{class_id}'"
+                    f'and l."date" <= '
+                    f"'{datetime.utcnow()}'"
+                ).one()
+                return data
+
+            except NoResultFound:
+                return []
+
+            except:
+                db_connection.session.rollback()
+                raise
+
+            finally:
+                db_connection.session.close()
+
+    @classmethod
+    def select_class_lectures_count(cls, user_id: str = None, class_id: str = None):
+        with DBConnectionHandler() as db_connection:
+            try:
+                data = db_connection.session.execute(
+                    f"select count(*) from attendances a inner join lectures l on a.lecture_id = l.id "
+                    f"inner join classes c on c.id = l.class_id "
+                    f"where student_id = '{user_id}' and c.id = '{class_id}'"
                     f'and l."date" <= '
                     f"'{datetime.utcnow()}'"
                 ).one()

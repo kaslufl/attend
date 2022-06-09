@@ -83,6 +83,7 @@ class UserController:
             dic["date"] = self.user_repo.select_user_class_first_lecture(aclass.id)
             dic["professor"] = self.user_repo.select_class_professor(aclass.id)
             dic["attendanceCount"] = self.user_repo.select_student_presence(user_id, aclass.id).count
+            dic["lessonsCount"] = self.user_repo.select_class_lectures_count(user_id, aclass.id).count
             result.append(dic)
 
         return result
