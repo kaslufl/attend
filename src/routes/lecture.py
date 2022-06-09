@@ -13,7 +13,6 @@ lecture = APIRouter(
 
 @dataclass
 class UpdatedAttendance:
-    id: str
     attendance: list
 
 
